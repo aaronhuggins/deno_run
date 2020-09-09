@@ -36,7 +36,13 @@ export function getArgs (): { deno: string[], cli: string[] } {
     if (i === 0 && COMMANDS.includes(args[i] as CliCommand)) {
       cli.push(args[i])
 
-      if (args[i] === 'display') isDeno = false
+      if (args[i] === 'display') {
+        if (typeof args[i + 1] === 'string' && args[i + 1].endsWith(MANIFEST_FNAME)) {
+          cli.push('--_manifest', args[i + 1])
+        }
+
+        isDeno = false
+      }
 
       continue
     }

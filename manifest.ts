@@ -9,6 +9,7 @@ const manifest: DenoManifest = {
       'deno.land',
       'github.com',
       'gitlab.com',
+      'raw.githubusercontent.com',
       'x.nest.land'
     ],
     read: true,
