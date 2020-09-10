@@ -7,6 +7,7 @@ export interface CliOptions {
     command: CliCommand
     manifest: string
     force: boolean
+    allowAll: boolean
   }
   deno: string[]
   script: string[]
@@ -96,9 +97,14 @@ export function getArgs (): { deno: string[], dr: string[], script: string[] } {
 export function getOptions (): CliOptions {
   const { deno, dr, script } = getArgs()
   const argv: Arguments = parser(dr, {
-    default: { 'dr.force': false },
-    narg: { 'dr.force': 0 },
-    boolean: ['dr.force'],
+    default: { 'dr.force': false, 'dr.allow-all': false },
+    narg: {
+      'dr.force': 0,
+      'dr.allow-all': 0,
+      'dr.manifest': 1,
+      'dr.command': 1
+    },
+    boolean: ['dr.force', 'dr.allow-all'],
     string: ['dr.manifest', 'dr.command']
   })
   const options: CliOptions = {

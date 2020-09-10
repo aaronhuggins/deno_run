@@ -1,9 +1,14 @@
 import { Ajv, resolve, dirname } from '../deps.ts'
 import { DenoManifest, DenoManifestSchema } from './types.ts'
+import { message, prompt } from './terminal.ts'
 import type { CliCommand } from './cli.ts'
 
 export const MANIFEST_FNAME = 'manifest.ts'
 export const FILE_HANDLE = 'file://localhost/'
+
+export function isUnstable (manifest: DenoManifest): boolean {
+  return !!manifest.unstable || (typeof manifest.permissions === 'object' && !!manifest.permissions.plugin)
+}
 
 export function isUrl (path?: string): boolean {
   if (
@@ -84,7 +89,6 @@ export function getManifestEntry (importPath: string, entry?: string): string {
 export function manifestToCommand (importPath: string, manifest: DenoManifest, command: CliCommand, flags: string[], script?: string[]) {
   const cmd = ['deno', command]
   const permissions: string[] = []
-  let unstable = false
   let file = getManifestEntry(importPath, manifest.entry)
 
   for (const [permission, value] of Object.entries(manifest.permissions || {})) {
@@ -93,11 +97,9 @@ export function manifestToCommand (importPath: string, manifest: DenoManifest, c
     } else if (Array.isArray(value)) {
       permissions.push('--allow-' + permission + '=' + value.join(','))
     }
-
-    if (permission === 'plugin') unstable = true
   }
 
-  if (manifest.unstable || unstable) cmd.push('--unstable')
+  if (isUnstable(manifest)) cmd.push('--unstable')
 
   cmd.push(...flags)
   cmd.push(...permissions)
@@ -105,4 +107,49 @@ export function manifestToCommand (importPath: string, manifest: DenoManifest, c
   if (typeof script !== 'undefined') cmd.push(...script)
 
   return cmd
+}
+
+export function manifestPermissionPrompt (manifest: DenoManifest, allowAll: boolean = false): void {
+  const { permissions = {} } = manifest
+  const permissionEntries = Object.entries(permissions)
+  const unstable = isUnstable(manifest)
+  const query = (question: string, permission: string) => {
+    const yes = ['y', 'yes']
+    const response = prompt(question)
+
+    if (!yes.includes(response.trim().toLowerCase())) {
+      message(`  Permission '${permission}' denied; exiting now.`)
+      Deno.exit()
+    }
+  }
+
+  if (permissionEntries.length === 0 && !unstable) {
+    message('This project requests no permissions in order to run.')
+
+    return
+  }
+
+  message('This project requests the following permissions:')
+
+  for (const [permission, value] of permissionEntries) {
+    if (value) {
+      const specificMsg = Array.isArray(value)
+        ? ' with access to ' + value.join(', ')
+        : ''
+      const promptEnd = allowAll ? 'ing with `--dr.allow-all`.' : '? (y|yes|n|no)'
+      const question = `  ${permission}${specificMsg}; accept${promptEnd} `
+
+      if (allowAll) {
+        message(question)
+      } else {
+        query(question, permission)
+      }
+    }
+  }
+
+  if (unstable && !allowAll) {
+    query('This project also requires unstable features; accept? (y|yes|n|no)', 'unstable')
+
+    return
+  }
 }

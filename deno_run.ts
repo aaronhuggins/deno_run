@@ -3,7 +3,8 @@ import {
   validateManifest,
   manifestToCommand,
   pathToManifest,
-  getManifestEntry
+  getManifestEntry,
+  manifestPermissionPrompt
 } from './lib/helpers.ts'
 import { getOptions } from './lib/cli.ts'
 import { message, pause } from './lib/terminal.ts'
@@ -52,6 +53,8 @@ async function main () {
     message(manifest)
     return
   }
+
+  manifestPermissionPrompt(manifest, options.dr.allowAll)
 
   if (options.dr.command === 'install' || options.dr.command === 'upgrade') {
     const deno = [...options.deno]

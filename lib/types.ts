@@ -3,7 +3,7 @@ export interface DenoManifest {
   name: string
   /** Version of the deno project; required, must conform to semantic versioning. */
   version: string
-  /** Entry point of the project; deno_run will fall back to mod.ts if not provided. */
+  /** Entry point of the project; deno_run will fall back to `mod.ts` if not provided. */
   entry?: string
   /** Url root of the project manifest; used by deno_run to check manifest integrity and version. */
   url?: string
@@ -13,6 +13,7 @@ export interface DenoManifest {
    * Runtime permissions for the project; will be passed to deno cli by deno_run.
    * See https://deno.land/manual/getting_started/permissions for more information.
    * The `--allow-all` permission is explicitly not supported for security reasons.
+   * Permissions must be explicitly set so that users can reason about their security.
    */
   permissions?: {
     /** Allow environment access for things like getting and setting of environment variables. */
