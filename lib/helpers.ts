@@ -1,5 +1,6 @@
 import { Ajv, resolve, dirname } from '../deps.ts'
 import { DenoManifest, DenoManifestSchema } from './types.ts'
+import type { CliCommand } from './cli.ts'
 
 export const MANIFEST_FNAME = 'manifest.ts'
 export const FILE_HANDLE = 'file://localhost/'
@@ -76,11 +77,15 @@ export async function importManifest (manifestPath: string): Promise<DenoManifes
   }
 }
 
-export function manifestToCommand (importPath: string, manifest: DenoManifest, command: string, flags: string[]) {
+export function getManifestEntry (importPath: string, entry?: string): string {
+  return new URL('./' + (entry || 'mod.ts'), importPath).toString()
+}
+
+export function manifestToCommand (importPath: string, manifest: DenoManifest, command: CliCommand, flags: string[], script?: string[]) {
   const cmd = ['deno', command]
   const permissions: string[] = []
   let unstable = false
-  let file = new URL('./' + (manifest.entry || 'mod.ts'), importPath).toString()
+  let file = getManifestEntry(importPath, manifest.entry)
 
   for (const [permission, value] of Object.entries(manifest.permissions || {})) {
     if (typeof value === 'boolean') {
@@ -97,6 +102,7 @@ export function manifestToCommand (importPath: string, manifest: DenoManifest, c
   cmd.push(...flags)
   cmd.push(...permissions)
   cmd.push(file)
+  if (typeof script !== 'undefined') cmd.push(...script)
 
   return cmd
 }

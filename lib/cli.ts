@@ -2,6 +2,15 @@ import { parser, Arguments } from '../deps.ts'
 import { MANIFEST_FNAME } from './helpers.ts'
 
 export type CliCommand = 'run' | 'install' | 'display' | 'help' | 'upgrade'
+export interface CliOptions {
+  dr: {
+    command: CliCommand
+    manifest: string
+    force: boolean
+  }
+  deno: string[]
+  script: string[]
+}
 
 const COMMANDS: CliCommand[] = [
   'display',
@@ -10,83 +19,93 @@ const COMMANDS: CliCommand[] = [
   'run',
   'upgrade'
 ]
+const CMD = {
+  RUN: 'run',
+  HELP: 'help',
+  INSTALL: 'install',
+  UPGRADE: 'upgrade',
+  DISPLAY: 'display'
+}
+const FLAG = {
+  CMD: '--dr.command',
+  MFST: '--dr.manifest'
+}
 
-/** Split arguments passed to Deno into cli arguments and Deno arguments. */
-export function getArgs (): { deno: string[], cli: string[] } {
+/** Sort arguments passed to Deno into cli arguments and Deno arguments. */
+export function getArgs (): { deno: string[], dr: string[], script: string[] } {
   const args = Deno.args.map(item => item)
+  const dr: string[] = []
   const deno: string[] = []
-  const cli: string[] = ['--_command']
-  let isDeno = true
+  const script: string[] = []
+  let isScript = false
+  let isDr = false
 
   if (args.length === 0) {
-    cli.push('run', '--_manifest', MANIFEST_FNAME)
+    dr.push(FLAG.CMD, CMD.RUN, FLAG.MFST, MANIFEST_FNAME)
 
-    return { deno, cli }
+    return { deno, dr, script }
   }
 
   if (args.length === 1 && COMMANDS.includes(args[0] as CliCommand)) {
-    if (args[0] === 'help') return { deno, cli: ['--_command', 'help'] }
+    if (args[0] === CMD.HELP) return { deno, dr: [FLAG.CMD, CMD.HELP], script }
 
-    cli.push(args[0], '--_manifest', MANIFEST_FNAME)
+    dr.push(FLAG.CMD, args[0], FLAG.MFST, MANIFEST_FNAME)
 
-    return { deno, cli }
+    return { deno, dr, script }
   }
 
   for (let i = 0; i < args.length; i += 1) {
     if (i === 0 && COMMANDS.includes(args[i] as CliCommand)) {
-      cli.push(args[i])
-
-      if (args[i] === 'display') {
-        if (typeof args[i + 1] === 'string' && args[i + 1].endsWith(MANIFEST_FNAME)) {
-          cli.push('--_manifest', args[i + 1])
-        }
-
-        isDeno = false
-      }
+      dr.push(FLAG.CMD, args[i])
 
       continue
     }
 
     if (i === 0 && args[i].endsWith(MANIFEST_FNAME)) {
-      cli.push('run', '--_manifest', args[i])
-      isDeno = false
+      dr.push(FLAG.CMD, CMD.RUN, FLAG.MFST, args[i])
+      isScript = true
 
       continue
     }
 
-    if (isDeno && args[i].endsWith(MANIFEST_FNAME)) {
-      cli.push('--_manifest', args[i])
-      isDeno = false
+    if (!isScript && args[i].endsWith(MANIFEST_FNAME)) {
+      dr.push(FLAG.MFST, args[i])
+      isScript = true
 
       continue
     }
 
-    if (isDeno) {
+    if (isScript) {
+      script.push(args[i])
+    } else if (isDr) {
+      dr.push(args[i])
+    } else if (args[i].startsWith('--dr.')) {
+      dr.push(args[i])
+      isDr = true
+    } else if (args[i].startsWith('--')) {
       deno.push(args[i])
+      isDr = false
     } else {
-      cli.push(args[i])
+      deno.push(args[i])
     }
   }
 
-  return { deno, cli }
+  return { deno, dr, script }
 }
 
-export function getOptions (): {
-  _deno: string[]
-  _cli: string[]
-  deno: Arguments
-  cli: Arguments
-} {
-  const { deno, cli } = getArgs()
-
-  return {
-    _deno: deno,
-    _cli: cli,
-    deno: parser(deno),
-    cli: parser(cli, {
-      default: { force: false },
-      boolean: ['force'],
-      string: ['_manifest', '_command']
-    })
+export function getOptions (): CliOptions {
+  const { deno, dr, script } = getArgs()
+  const argv: Arguments = parser(dr, {
+    default: { 'dr.force': false },
+    narg: { 'dr.force': 0 },
+    boolean: ['dr.force'],
+    string: ['dr.manifest', 'dr.command']
+  })
+  const options: CliOptions = {
+    dr: { ...argv.dr },
+    deno,
+    script
   }
+
+  return options
 }
