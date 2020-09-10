@@ -2,7 +2,7 @@ import { Ajv, resolve, dirname } from '../deps.ts'
 import { DenoManifest, DenoManifestSchema } from './types.ts'
 
 export const MANIFEST_FNAME = 'manifest.ts'
-export const FILE_HANDLE = 'file:///'
+export const FILE_HANDLE = 'file://localhost/'
 
 export function isUrl (path?: string): boolean {
   if (
