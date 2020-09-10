@@ -103,7 +103,11 @@ export function manifestToCommand (importPath: string, manifest: DenoManifest, c
 
   cmd.push(...flags)
   cmd.push(...permissions)
+
+  if (command === 'install') cmd.push('--name', manifest.name)
+
   cmd.push(file)
+
   if (typeof script !== 'undefined') cmd.push(...script)
 
   return cmd
