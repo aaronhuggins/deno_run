@@ -13,12 +13,17 @@ function objectToSource (val: any) {
         visited.add(value)
       }
 
+      if (typeof value === 'function') {
+        return `[Function: ${typeof value.name === 'undefined' ? key : value.name}]`
+      }
+
       return value
     }
   }
 
   return JSON.stringify(val, circular(), 2)
     .replace(/"([a-zA-Z_][a-zA-Z0-9_]*)":/gu, '$1:')
+    .replace(/"\[Function: ([a-zA-Z_][a-zA-Z0-9_]*)\]"/gu, '[Function: $1]')
     .replace(/"\[Circular\]"/gu, CIRC_REF)
 }
 

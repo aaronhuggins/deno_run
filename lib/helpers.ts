@@ -1,6 +1,7 @@
 import { Ajv, resolve, dirname } from '../deps.ts'
 import { DenoManifest, DenoManifestSchema } from './types.ts'
 import { message, prompt } from './terminal.ts'
+import { importSandbox } from './importSandbox.ts'
 import type { CliCommand } from './cli.ts'
 
 export const MANIFEST_FNAME = 'manifest.ts'
@@ -73,7 +74,7 @@ export function pathToManifest (path: string = ''): string {
 
 export async function importManifest (manifestPath: string): Promise<DenoManifest> {
   try {
-    const module = await import(manifestPath)
+    const module = await importSandbox(manifestPath)
 
     return module.default || module.manifest
   } catch (error) {
