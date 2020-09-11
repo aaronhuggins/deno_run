@@ -51,6 +51,7 @@ export interface DenoManifest {
   metadata?: Record<string, any>
 }
 
+/** JSON Schema for validating a DenoManifest object at runtime. */
 export const DenoManifestSchema = {
   required: ['name', 'version'],
   type: 'object',
