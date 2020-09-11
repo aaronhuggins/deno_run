@@ -7,9 +7,9 @@ import {
   getManifestEntry,
   manifestPermissionPrompt,
   safeCwd
-} from './lib/helpers.ts'
-import { getOptions, getHelp } from './lib/cli.ts'
-import { message, pause } from './lib/terminal.ts'
+} from './lib/_helpers.ts'
+import { getOptions, getHelp } from './lib/_cli.ts'
+import { message, pause } from './lib/_terminal.ts'
 
 /** Determine if the entry point is the same as this import. */
 function isTargetSelf (importPath: string, entry?: string): boolean {

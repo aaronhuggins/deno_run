@@ -1,8 +1,8 @@
 import { Ajv, Colors, resolve, dirname } from '../deps.ts'
 import { DenoManifest, DenoManifestSchema } from '../types.ts'
 import { message, prompt } from './terminal.ts'
-import { importSandbox } from './importSandbox.ts'
-import type { CliCommand } from './cli.ts'
+import { importSandbox } from './_importSandbox.ts'
+import type { CliCommand } from './_cli.ts'
 
 export const MANIFEST_FNAME = 'manifest.ts'
 export const FILE_HANDLE = 'file://localhost/'
