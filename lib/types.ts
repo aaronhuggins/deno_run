@@ -54,6 +54,7 @@ export interface DenoManifest {
 export const DenoManifestSchema = {
   required: ['name', 'version'],
   type: 'object',
+  additionalProperties: false,
   properties: {
     name: {
       type: 'string'
@@ -75,6 +76,7 @@ export const DenoManifestSchema = {
     },
     permissions: {
       type: 'object',
+      additionalProperties: false,
       properties: {
         env: {
           type: 'boolean'

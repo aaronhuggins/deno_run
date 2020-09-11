@@ -57,6 +57,12 @@ async function main () {
     const error = validateManifest(manifest)
 
     if (typeof error !== 'undefined') {
+      if (options.dr.command === 'validate') {
+        message('')
+        message('  ' + Colors.red('✖') + ' Invalid manifest: ' + Colors.cyan(importPath))
+        message('')
+      }
+
       throw error
     }
 
