@@ -1,5 +1,6 @@
 import { parser, Arguments } from '../deps.ts'
-import { MANIFEST_FNAME, getManifestEntry } from './helpers.ts'
+import { MANIFEST_FNAME } from './helpers.ts'
+import manifest from '../manifest.ts'
 
 export type CliCommand = 'run' | 'install' | 'display' | 'help' | 'upgrade' | 'bootstrap'
 export interface CliOptions {
@@ -116,4 +117,37 @@ export function getOptions (): CliOptions {
   }
 
   return options
+}
+
+export function getHelp () {
+  const help = `
+deno_run ${manifest.version}
+A Deno manifest runner utility
+
+USAGE:
+  deno_run [COMMAND] [OPTIONS] <MANIFEST_FILE> [SCRIPT FLAGS]
+
+COMMANDS:
+  bootstrap         Bootstraps deno_run when installing for the first time.
+  display           Output the composed deno command and manifest file
+                    contents.
+  help              Output this help text.
+  install           Install the project entry point in a given manifest.
+  run               Run the project entry point with a given manifest.
+  upgrade           Install a project, adding --force for deno.
+
+OPTIONS:
+  --dr.force        Use with command 'display' toignore errors.
+  --dr.allow-all    Use with commands 'install', 'run', and 'upgrade' to accept
+                    all permissions.
+
+  Additionally any valid option for 'deno run' or 'deno install' may be passed.
+
+MANIFEST_FILE:
+  Any valid url or file path to a valid manifest.ts
+
+SCRIPT_FLAGS
+  Any flags placed after manifest.ts will be passed to the project entry point.`
+
+  return help
 }

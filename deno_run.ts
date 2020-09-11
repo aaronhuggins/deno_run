@@ -7,7 +7,7 @@ import {
   manifestPermissionPrompt,
   safeCwd
 } from './lib/helpers.ts'
-import { getOptions } from './lib/cli.ts'
+import { getOptions, getHelp } from './lib/cli.ts'
 import { message, pause } from './lib/terminal.ts'
 
 function isTargetSelf (importPath: string, entry?: string): boolean {
@@ -41,14 +41,14 @@ async function main () {
     return
   }
 
+  if (options.dr.command === 'help') {
+    message(getHelp())
+    return
+  }
+
   const importPath = pathToManifest(options.dr.manifest)
   const manifest = await importManifest(importPath)
   const targetSelf = isTargetSelf(importPath, manifest.entry)
-
-  if (options.dr.command === 'help') {
-    // TODO: help output
-    return
-  }
 
   let cmd: string[] = []
 
