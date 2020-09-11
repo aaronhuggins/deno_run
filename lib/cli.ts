@@ -1,5 +1,5 @@
 import { parser, Arguments } from '../deps.ts'
-import { MANIFEST_FNAME } from './helpers.ts'
+import { MANIFEST_FNAME, isUrl } from './helpers.ts'
 import manifest from '../manifest.ts'
 
 export type CliCommand = 'run' | 'install' | 'display' | 'help' | 'upgrade' | 'bootstrap'
@@ -72,7 +72,7 @@ export function getArgs (): { deno: string[], dr: string[], script: string[] } {
       continue
     }
 
-    if (!isScript && args[i].endsWith(MANIFEST_FNAME)) {
+    if (!isScript && (args[i].endsWith(MANIFEST_FNAME) || isUrl(args[i]))) {
       dr.push(FLAG.MFST, args[i])
       isScript = true
 
