@@ -9,46 +9,49 @@ export interface DenoManifest {
   url?: string
   /** Run deno cli with `--unstable`. */
   unstable?: boolean
-  /**
-   * Runtime permissions for the project; will be passed to deno cli by deno_run.
-   * See https://deno.land/manual/getting_started/permissions for more information.
-   * The `--allow-all` permission is explicitly not supported for security reasons.
-   * Permissions must be explicitly set so that users can reason about their security.
-   */
-  permissions?: {
-    /** Allow environment access for things like getting and setting of environment variables. */
-    env?: boolean
-    /** Allow high-resolution time measurement. High-resolution time can be used in timing attacks and fingerprinting. */
-    hrtime?: boolean
-    /**
-     * Allow network access.
-     * You can specify a list of domains to provide an allow-list of allowed domains.
-     */
-    net?: boolean | string[]
-    /**
-     * Allow loading plugins.
-     * Please note that `--allow-plugin` is an unstable feature and deno_run will explicitly enable `--unstable`.
-     */
-    plugin?: boolean
-    /**
-     * Allow file system read access.
-     * You can specify a list of directories or files to provide a allow-list of allowed file system access.
-     */
-    read?: boolean | string[]
-    /**
-     * Allow running subprocesses.
-     * Be aware that subprocesses are not run in a sandbox and therefore do not have
-     * the same security restrictions as the deno process. Therefore, use with caution.
-     */
-    run?: boolean
-    /**
-     * Allow file system write access.
-     * You can specify a list of directories or files to provide a allow-list of allowed file system access.
-     */
-    write?: boolean | string[]
-  }
+  /** Runtime permissions for the project; will be passed to deno cli by deno_run. */
+  permissions?: ManifestPermissions
   /** Project metadata; will be ignored by deno_run but may be used to store additional values. */
   metadata?: Record<string, any>
+}
+
+/**
+ * Runtime permissions for the project; will be passed to deno cli by deno_run.
+ * See https://deno.land/manual/getting_started/permissions for more information.
+ * The `--allow-all` permission is explicitly not supported for security reasons.
+ * Permissions must be explicitly set so that users can reason about their security.
+ */
+export interface ManifestPermissions {
+  /** Allow environment access for things like getting and setting of environment variables. */
+  env?: boolean
+  /** Allow high-resolution time measurement. High-resolution time can be used in timing attacks and fingerprinting. */
+  hrtime?: boolean
+  /**
+   * Allow network access.
+   * You can specify a list of domains to provide an allow-list of allowed domains.
+   */
+  net?: boolean | string[]
+  /**
+   * Allow loading plugins.
+   * Please note that `--allow-plugin` is an unstable feature and deno_run will explicitly enable `--unstable`.
+   */
+  plugin?: boolean
+  /**
+   * Allow file system read access.
+   * You can specify a list of directories or files to provide a allow-list of allowed file system access.
+   */
+  read?: boolean | string[]
+  /**
+   * Allow running subprocesses.
+   * Be aware that subprocesses are not run in a sandbox and therefore do not have
+   * the same security restrictions as the deno process. Therefore, use with caution.
+   */
+  run?: boolean
+  /**
+   * Allow file system write access.
+   * You can specify a list of directories or files to provide a allow-list of allowed file system access.
+   */
+  write?: boolean | string[]
 }
 
 /** JSON Schema for validating a DenoManifest object at runtime. */
