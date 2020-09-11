@@ -1,6 +1,6 @@
 import { Ajv, Colors, resolve, dirname } from '../deps.ts'
 import { DenoManifest, DenoManifestSchema } from '../types.ts'
-import { message, prompt } from './terminal.ts'
+import { message, prompt } from './_terminal.ts'
 import { importSandbox } from './_importSandbox.ts'
 import type { CliCommand } from './_cli.ts'
 
