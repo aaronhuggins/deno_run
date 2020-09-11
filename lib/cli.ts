@@ -143,7 +143,7 @@ COMMANDS:
   install           Install the project entry point in a given manifest.
   run               Run the project entry point with a given manifest.
   upgrade           Install a project, adding --force for deno.
-  validate          Validate that a given manifest on the filesystem will pass.
+  validate          Validate that a given manifest will pass.
 
 OPTIONS:
   --dr.force        Use with command 'display' to ignore errors.
