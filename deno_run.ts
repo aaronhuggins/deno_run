@@ -4,7 +4,8 @@ import {
   manifestToCommand,
   pathToManifest,
   getManifestEntry,
-  manifestPermissionPrompt
+  manifestPermissionPrompt,
+  safeCwd
 } from './lib/helpers.ts'
 import { getOptions } from './lib/cli.ts'
 import { message, pause } from './lib/terminal.ts'
@@ -71,7 +72,7 @@ async function main () {
   if (cmd.length > 0) {
     const process = Deno.run({
       cmd,
-      cwd: Deno.cwd(),
+      cwd: safeCwd(),
       stderr: 'inherit',
       stdout: 'inherit',
       stdin: 'inherit'

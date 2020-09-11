@@ -7,6 +7,18 @@ import type { CliCommand } from './cli.ts'
 export const MANIFEST_FNAME = 'manifest.ts'
 export const FILE_HANDLE = 'file://localhost/'
 
+export function safeCwd (): string {
+  try {
+    return Deno.cwd()
+  } catch (error) {
+    if (error instanceof Deno.errors.PermissionDenied) {
+      return '.'
+    }
+
+    throw error
+  }
+}
+
 export function isUnstable (manifest: DenoManifest): boolean {
   return !!manifest.unstable || (typeof manifest.permissions === 'object' && !!manifest.permissions.plugin)
 }
@@ -46,7 +58,7 @@ export function pathToManifest (path: string = ''): string {
   const url = isUrl(path)
 
   if (!url && (path.trim() === '' || path.trim() === '.' || path.trim().toLowerCase() === MANIFEST_FNAME)) {
-    return new URL(FILE_HANDLE + resolve(Deno.cwd(), MANIFEST_FNAME)).toString()
+    return new URL(FILE_HANDLE + resolve(safeCwd(), MANIFEST_FNAME)).toString()
   }
   if (!url && path.endsWith('.ts')) {
     return new URL(FILE_HANDLE + resolve(dirname(path), MANIFEST_FNAME)).toString()
@@ -78,7 +90,6 @@ export async function importManifest (manifestPath: string): Promise<DenoManifes
 
     return module.default || module.manifest
   } catch (error) {
-    console.log(error)
     return {} as DenoManifest
   }
 }

@@ -28,8 +28,6 @@ export async function importSandbox (importPath: string): Promise<any> {
   })
   // If any output or a non-zero exit was recieved from the subprocess, fail the import.
   if (error.length > 0 || output.length > 0 || status.code !== 0) {
-    // const { decode } = new TextDecoder()
-    // console.log(decode(error), decode(output), status)
     throw new Deno.errors.PermissionDenied(sandboxError('subprocess'))
   }
 

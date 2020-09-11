@@ -1,7 +1,7 @@
 import { parser, Arguments } from '../deps.ts'
-import { MANIFEST_FNAME } from './helpers.ts'
+import { MANIFEST_FNAME, getManifestEntry } from './helpers.ts'
 
-export type CliCommand = 'run' | 'install' | 'display' | 'help' | 'upgrade'
+export type CliCommand = 'run' | 'install' | 'display' | 'help' | 'upgrade' | 'bootstrap'
 export interface CliOptions {
   dr: {
     command: CliCommand
@@ -18,14 +18,16 @@ const COMMANDS: CliCommand[] = [
   'help',
   'install',
   'run',
-  'upgrade'
+  'upgrade',
+  'bootstrap'
 ]
 const CMD = {
   RUN: 'run',
   HELP: 'help',
   INSTALL: 'install',
   UPGRADE: 'upgrade',
-  DISPLAY: 'display'
+  DISPLAY: 'display',
+  BOOTSTRAP: 'bootstrap'
 }
 const FLAG = {
   CMD: '--dr.command',
@@ -111,6 +113,11 @@ export function getOptions (): CliOptions {
     dr: { ...argv.dr },
     deno,
     script
+  }
+
+  if (options.dr.command === 'bootstrap') {
+    options.dr.command = 'install'
+    options.dr.manifest = import.meta.url.replace(/lib[\/\\]cli.ts$/gu, MANIFEST_FNAME)
   }
 
   return options
