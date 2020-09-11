@@ -21,6 +21,8 @@ deno_run install https://deno.land/x/some_project/manifest.ts
 deno_run upgrade https://deno.land/x/some_project/manifest.ts
 ```
 
+The user will be prompted to accept permissions from the manifest, with a clear, human-readable explanation of each requested permission.
+
 For more details, run `deno_run help`.
 
 ## `manifest.ts`
@@ -45,4 +47,4 @@ There are multiple issues which discuss an equivalent to `package.json` or a per
   - https://github.com/denoland/deno/issues/3675
   - https://github.com/denoland/deno/issues/3179
 
-Many of these discussions include a lot of talk about Node.js doing things a certain way, and well, people are just used to it. I completely disagree; Deno is trying to accomplish something very intentional in breaking away from that ecosystem. Security, composability and ease of use are all a part of the forward-path for Deno, as well as more that's not well-defined or well understood yet. The author of `deno_run` is opinionated that Deno is the proper place for package management and tooling; the manifest file is not for every Deno project but is instead meant to remove friction where it concerns running and installing Deno projects which are command line tools.
+Many of these discussions include a lot of talk about Node.js doing things a certain way, and well, people are just used to it. I completely disagree; Deno is trying to accomplish something very intentional in breaking away from that ecosystem. Security, composability, and ease of use are all a part of the forward-path for Deno, as well as more that's not yet well-defined or yet well-understood. The author of `deno_run` is opinionated that Deno is the proper place for package management and tooling; the manifest file is not for every Deno project but is instead meant to remove friction where it concerns running and installing Deno projects which are command line tools.
