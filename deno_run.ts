@@ -11,7 +11,7 @@ import { message, pause } from './lib/terminal.ts'
 
 function isTargetSelf (importPath: string, entry?: string): boolean {
   const self = import.meta.url
-  const target = getManifestEntry(importPath, entry)
+  const target = getManifestEntry(importPath, entry).toString()
 
   return self === target
 }

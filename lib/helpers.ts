@@ -83,14 +83,17 @@ export async function importManifest (manifestPath: string): Promise<DenoManifes
   }
 }
 
-export function getManifestEntry (importPath: string, entry?: string): string {
-  return new URL('./' + (entry || 'mod.ts'), importPath).toString()
+export function getManifestEntry (importPath: string, entry?: string): URL {
+  return new URL('./' + (entry || 'mod.ts'), importPath)
 }
 
 export function manifestToCommand (importPath: string, manifest: DenoManifest, command: CliCommand, flags: string[], script?: string[]) {
   const cmd = ['deno', command]
   const permissions: string[] = []
-  let file = getManifestEntry(importPath, manifest.entry)
+  const url = getManifestEntry(importPath, manifest.entry)
+  const file = url.protocol === 'file:'
+    ? resolve(Deno.build.os === 'windows' ? url.pathname.substring(1) : url.pathname)
+    : url.toString()
 
   for (const [permission, value] of Object.entries(manifest.permissions || {})) {
     if (typeof value === 'boolean') {
