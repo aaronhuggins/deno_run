@@ -1,4 +1,4 @@
-import type { DenoManifest } from './lib/types.ts'
+import type { DenoManifest } from './types.ts'
 
 const manifest: DenoManifest = {
   name: 'deno_run',
