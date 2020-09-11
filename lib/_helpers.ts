@@ -148,7 +148,7 @@ export function manifestPermissionPrompt (manifest: DenoManifest, allowAll: bool
     const response = prompt(question)
 
     if (!yes.includes(response.trim().toLowerCase())) {
-      message('\n  ' + Colors.red(`Permission '${PERM_MSG[permission]}' denied; exiting now.\n`))
+      message('\n  ' + Colors.red(`Permission '${permission}' denied; exiting now.\n`))
       Deno.exit()
     }
   }
