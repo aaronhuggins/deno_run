@@ -4,7 +4,7 @@ A project manifest definition and runner for Deno.
 
 ## Usage
 
-Install using `deno` to bootstrap `deno_run`:
+Install using `deno` to bootstrap [`deno_run`](https://deno.land/x/deno_run):
 ```shell
 deno install --allow-run https://deno.land/x/deno_run/deno_run.ts bootstrap
 ```
