@@ -1,4 +1,4 @@
-import { Ajv, resolve, dirname } from '../deps.ts'
+import { Ajv, Colors, resolve, dirname } from '../deps.ts'
 import { DenoManifest, DenoManifestSchema } from './types.ts'
 import { message, prompt } from './terminal.ts'
 import { importSandbox } from './importSandbox.ts'
@@ -129,6 +129,16 @@ export function manifestToCommand (importPath: string, manifest: DenoManifest, c
   return cmd
 }
 
+export const PERM_MSG: Record<string, string> = {
+  env: Colors.cyan('Env') + Colors.reset(' - allow environment access for things like getting and setting of environment variables.'),
+  hrtime: Colors.cyan('High-resolution Time') + Colors.reset(' - allow high-resolution time measurement. High-resolution time can be used in timing attacks and fingerprinting.'),
+  net: Colors.cyan('Net') + Colors.reset(' - allow network access.'),
+  plugin: Colors.cyan('Plugin') + Colors.reset(' - allow loading plugins; unstable as of Deno v1.3.3.'),
+  read: Colors.cyan('Read') + Colors.reset(' - allow file system read access.'),
+  run: Colors.cyan('Run') + Colors.reset(' - allow running subprocesses; subprocesses are not run in a sandbox and do not have the same security restrictions as the deno process.'),
+  write: Colors.cyan('Write') + Colors.reset(' - allow file system write access.')
+}
+
 export function manifestPermissionPrompt (manifest: DenoManifest, allowAll: boolean = false): void {
   const { permissions = {} } = manifest
   const permissionEntries = Object.entries(permissions)
@@ -138,26 +148,29 @@ export function manifestPermissionPrompt (manifest: DenoManifest, allowAll: bool
     const response = prompt(question)
 
     if (!yes.includes(response.trim().toLowerCase())) {
-      message(`  Permission '${permission}' denied; exiting now.`)
+      message('\n  ' + Colors.red(`Permission '${PERM_MSG[permission]}' denied; exiting now.\n`))
       Deno.exit()
     }
   }
 
   if (permissionEntries.length === 0 && !unstable) {
-    message('This project requests no permissions in order to run.')
+    message('  ' + Colors.green('✓') + ' This project requests no permissions in order to run.')
 
     return
   }
 
-  message('This project requests the following permissions:')
+  const ALLOW_ALL_MSG = 'Accepting with `--dr.allow-all`.'
+  const ASK_EACH_MSG = 'Do you accept? (y|yes|n|no)'
+
+  message(Colors.red('⚠') + ' This project requests the following permissions:')
 
   for (const [permission, value] of permissionEntries) {
     if (value) {
       const specificMsg = Array.isArray(value)
-        ? ' with access to ' + value.join(', ')
+        ? '\n\n    With access restricted to: \n    - ' + value.map(item => Colors.cyan(item)).join('\n    - ')
         : ''
-      const promptEnd = allowAll ? 'ing with `--dr.allow-all`.' : '? (y|yes|n|no)'
-      const question = `  ${permission}${specificMsg}; accept${promptEnd} `
+      const promptEnd = allowAll ? ALLOW_ALL_MSG : ASK_EACH_MSG
+      const question = `\n  ${Colors.cyan(PERM_MSG[permission])}${specificMsg}\n\n  ${promptEnd} `
 
       if (allowAll) {
         message(question)
@@ -167,9 +180,12 @@ export function manifestPermissionPrompt (manifest: DenoManifest, allowAll: bool
     }
   }
 
-  if (unstable && !allowAll) {
-    query('This project also requires unstable features; accept? (y|yes|n|no)', 'unstable')
-
-    return
+  const UNSTABLE_MSG = 'This project also requires unstable features'
+  if (unstable) {
+    if (allowAll) {
+      message(UNSTABLE_MSG + '; ' + ALLOW_ALL_MSG)
+    } else {
+      query(Colors.red(UNSTABLE_MSG + '; ' + ASK_EACH_MSG), 'unstable')
+    }
   }
 }
