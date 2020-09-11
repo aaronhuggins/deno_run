@@ -77,17 +77,17 @@ async function main () {
   }
 
   if (options.dr.command === 'display' || (targetSelf && options.dr.command === 'run')) {
-    cmd = manifestToCommand(importPath, manifest, 'run', options.deno)
+    cmd = manifestToCommand(importPath, manifest, 'run', options.deno, options.script)
 
     if (targetSelf && options.dr.command === 'run') {
       message('')
-      message('WARNING !! Target script or command cannot be itself. !!')
+      message('  ' + Colors.red('✖ WARNING') + ' !! Target script or command cannot be itself. !!')
       message('')
       pause()
     }
 
     message('Deno CLI Command:')
-    message('  ' + cmd.join(' '))
+    message('  ' + Colors.cyan(cmd.join(' ')))
     message('Manifest:')
     message(manifest)
     return
@@ -104,7 +104,7 @@ async function main () {
   }
 
   if (options.dr.command === 'run') {
-    cmd = manifestToCommand(importPath, manifest, 'run', options.deno)
+    cmd = manifestToCommand(importPath, manifest, 'run', options.deno, options.script)
   }
 
   if (cmd.length > 0) {
