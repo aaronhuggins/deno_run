@@ -21,6 +21,8 @@ deno_run install https://deno.land/x/some_project/manifest.ts
 deno_run upgrade https://deno.land/x/some_project/manifest.ts
 ```
 
+For more details, run `deno_run help`.
+
 ## `manifest.ts`
 
 The metadata for a Deno project which supports this tool can be found in a file named `manifest.ts` in the project root. It is a plain TypeScript file which exports either a default or a named `manifest` object. The export object **must** conform to both the `DenoManifest` interface and the `DenoManifestSchema` json schema; these can be found in `lib/types.ts`. The manifest will be imported in a sandboxed environment which disallows any privileged API and which strips the export of any non-primitive, non-object, non-array value.
