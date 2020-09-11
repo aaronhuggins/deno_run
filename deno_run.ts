@@ -11,6 +11,7 @@ import {
 import { getOptions, getHelp } from './lib/cli.ts'
 import { message, pause } from './lib/terminal.ts'
 
+/** Determine if the entry point is the same as this import. */
 function isTargetSelf (importPath: string, entry?: string): boolean {
   const self = import.meta.url
   const target = getManifestEntry(importPath, entry).toString()
@@ -18,6 +19,7 @@ function isTargetSelf (importPath: string, entry?: string): boolean {
   return self === target
 }
 
+/** Simple command runner. */
 async function runner (cmd: string[]) {
   const process = Deno.run({
     cmd,
@@ -33,6 +35,7 @@ async function runner (cmd: string[]) {
   }
 }
 
+/** Main program logic. */
 async function main () {
   const options = getOptions()
 
