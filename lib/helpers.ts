@@ -90,6 +90,7 @@ export async function importManifest (manifestPath: string): Promise<DenoManifes
 
     return module.default || module.manifest
   } catch (error) {
+    message(error)
     return {} as DenoManifest
   }
 }
