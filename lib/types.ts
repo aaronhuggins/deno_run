@@ -5,7 +5,7 @@ export interface DenoManifest {
   version: string
   /** Entry point of the project; deno_run will fall back to `mod.ts` if not provided. */
   entry?: string
-  /** Url root of the project manifest; used by deno_run to check manifest integrity and version. */
+  /** Url root of the project manifest; used by deno_run to check manifest integrity and version. Not yet implemented. */
   url?: string
   /** Run deno cli with `--unstable`. */
   unstable?: boolean
@@ -38,7 +38,7 @@ export interface DenoManifest {
     /**
      * Allow running subprocesses.
      * Be aware that subprocesses are not run in a sandbox and therefore do not have
-     * the same securityrestrictions as the deno process. Therefore, use with caution.
+     * the same security restrictions as the deno process. Therefore, use with caution.
      */
     run?: boolean
     /**
@@ -47,7 +47,7 @@ export interface DenoManifest {
      */
     write?: boolean | string[]
   }
-  /** Project metadata; will be ignored by deno but may be used to store additional values. */
+  /** Project metadata; will be ignored by deno_run but may be used to store additional values. */
   metadata?: Record<string, any>
 }
 
