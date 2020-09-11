@@ -96,7 +96,7 @@ async function main () {
     return
   }
 
-  manifestPermissionPrompt(manifest, options.dr.allowAll)
+  manifestPermissionPrompt(manifest, options.dr.allowAll, options.dr.allowSkip)
 
   if (options.dr.command === 'install' || options.dr.command === 'upgrade') {
     const deno = [...options.deno]

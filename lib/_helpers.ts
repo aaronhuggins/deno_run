@@ -139,7 +139,7 @@ export const PERM_MSG: Record<string, string> = {
   write: Colors.cyan('Write') + Colors.reset(' - allow file system write access.')
 }
 
-export function manifestPermissionPrompt (manifest: DenoManifest, allowAll: boolean = false): void {
+export function manifestPermissionPrompt (manifest: DenoManifest, allowAll: boolean = false, allowSkip: boolean = false): void {
   const { permissions = {} } = manifest
   const permissionEntries = Object.entries(permissions)
   const unstable = isUnstable(manifest)
@@ -148,8 +148,14 @@ export function manifestPermissionPrompt (manifest: DenoManifest, allowAll: bool
     const response = prompt(question)
 
     if (!yes.includes(response.trim().toLowerCase())) {
-      message('\n  ' + Colors.red(`Permission '${permission}' denied; exiting now.\n`))
-      Deno.exit()
+      const denied = '\n  ' + Colors.red(`Permission '${permission}' denied`)
+
+      if (allowSkip) {
+        message(denied + '; skipping. Application will be denied and may crash.\n')
+      } else {
+        message(denied + '; exiting now.\n')
+        Deno.exit()
+      }
     }
   }
 

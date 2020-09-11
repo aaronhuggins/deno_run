@@ -9,6 +9,7 @@ export interface CliOptions {
     manifest: string
     force: boolean
     allowAll: boolean
+    allowSkip: boolean
   }
   deno: string[]
   script: string[]
@@ -36,7 +37,8 @@ const FLAG = {
   CMD: '--dr.command',
   MFST: '--dr.manifest',
   ALL: '--dr.allow-all',
-  FORCE: '--dr.force'
+  FORCE: '--dr.force',
+  SKIP: '--dr.skip'
 }
 
 /** Sort arguments passed to Deno into cli arguments and Deno arguments. */
@@ -108,14 +110,19 @@ export function getArgs (): { deno: string[], dr: string[], script: string[] } {
 export function getOptions (): CliOptions {
   const { deno, dr, script } = getArgs()
   const argv: Arguments = parser(dr, {
-    default: { 'dr.force': false, 'dr.allow-all': false },
+    default: {
+      'dr.force': false,
+      'dr.allow-all': false,
+      'dr.allow-skip': false
+    },
     narg: {
       'dr.force': 0,
       'dr.allow-all': 0,
+      'dr.allow-skip': 0,
       'dr.manifest': 1,
       'dr.command': 1
     },
-    boolean: ['dr.force', 'dr.allow-all'],
+    boolean: ['dr.force', 'dr.allow-all', 'dr.allow-skip'],
     string: ['dr.manifest', 'dr.command']
   })
   const options: CliOptions = {
@@ -149,6 +156,8 @@ OPTIONS:
   --dr.force        Use with command 'display' to ignore errors.
   --dr.allow-all    Use with commands 'install', 'run', and 'upgrade' to accept
                     all permissions.
+  --dr.allow-skip   Use with commands 'install', 'run', and 'upgrade' to permit
+                    skipping permissions instead of exiting when denied.
 
   Additionally any valid option for 'deno run' or 'deno install' may be passed.
 
