@@ -115,10 +115,5 @@ export function getOptions (): CliOptions {
     script
   }
 
-  if (options.dr.command === 'bootstrap') {
-    options.dr.command = 'install'
-    options.dr.manifest = import.meta.url.replace(/lib[\/\\]cli.ts$/gu, MANIFEST_FNAME)
-  }
-
   return options
 }

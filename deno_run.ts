@@ -17,8 +17,30 @@ function isTargetSelf (importPath: string, entry?: string): boolean {
   return self === target
 }
 
+async function runner (cmd: string[]) {
+  const process = Deno.run({
+    cmd,
+    cwd: safeCwd(),
+    stderr: 'inherit',
+    stdout: 'inherit',
+    stdin: 'inherit'
+  })
+  const status = await process.status()
+
+  if (status.code > 0) {
+    Deno.exit(status.code)
+  }
+}
+
 async function main () {
   const options = getOptions()
+
+  if (options.dr.command === 'bootstrap') {
+    await runner(['deno', 'install', '--allow-net', '--allow-read', '--allow-run', import.meta.url])
+
+    return
+  }
+
   const importPath = pathToManifest(options.dr.manifest)
   const manifest = await importManifest(importPath)
   const targetSelf = isTargetSelf(importPath, manifest.entry)
@@ -70,18 +92,7 @@ async function main () {
   }
 
   if (cmd.length > 0) {
-    const process = Deno.run({
-      cmd,
-      cwd: safeCwd(),
-      stderr: 'inherit',
-      stdout: 'inherit',
-      stdin: 'inherit'
-    })
-    const status = await process.status()
-
-    if (status.code > 0) {
-      Deno.exit(status.code)
-    }
+    await runner(cmd)
   }
 }
 
