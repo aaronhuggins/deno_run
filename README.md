@@ -9,6 +9,11 @@ Install using `deno` to bootstrap [`deno_run`](https://deno.land/x/deno_run):
 deno install --allow-run https://deno.land/x/deno_run/deno_run.ts bootstrap
 ```
 
+If already installed, `deno_run` can upgrade itself:
+```shell
+deno_run upgrade https://deno.land/x/deno_run/
+```
+
 Then, projects which implement DenoManifest as `manifest.ts` can be run or installed using `deno_run`:
 ```shell
 # Runs a project manifest.
