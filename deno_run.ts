@@ -61,7 +61,7 @@ async function main () {
 
     if (options.dr.command === 'upgrade') deno.push('--force')
 
-    cmd = manifestToCommand(importPath, manifest, 'install', options.deno)
+    cmd = manifestToCommand(importPath, manifest, 'install', deno)
   }
 
   if (options.dr.command === 'run') {
