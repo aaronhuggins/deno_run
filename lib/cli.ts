@@ -2,7 +2,7 @@ import { parser, Arguments } from '../deps.ts'
 import { MANIFEST_FNAME, isUrl } from './helpers.ts'
 import manifest from '../manifest.ts'
 
-export type CliCommand = 'run' | 'install' | 'display' | 'help' | 'upgrade' | 'bootstrap'
+export type CliCommand = 'run' | 'install' | 'display' | 'help' | 'upgrade' | 'bootstrap' | 'validate'
 export interface CliOptions {
   dr: {
     command: CliCommand
@@ -20,7 +20,8 @@ const COMMANDS: CliCommand[] = [
   'install',
   'run',
   'upgrade',
-  'bootstrap'
+  'bootstrap',
+  'validate'
 ]
 const CMD = {
   RUN: 'run',
@@ -28,11 +29,14 @@ const CMD = {
   INSTALL: 'install',
   UPGRADE: 'upgrade',
   DISPLAY: 'display',
-  BOOTSTRAP: 'bootstrap'
+  BOOTSTRAP: 'bootstrap',
+  VALIDATE: 'validate'
 }
 const FLAG = {
   CMD: '--dr.command',
-  MFST: '--dr.manifest'
+  MFST: '--dr.manifest',
+  ALL: '--dr.allow-all',
+  FORCE: '--dr.force'
 }
 
 /** Sort arguments passed to Deno into cli arguments and Deno arguments. */
@@ -77,6 +81,10 @@ export function getArgs (): { deno: string[], dr: string[], script: string[] } {
       isScript = true
 
       continue
+    }
+
+    if (args[i] === '--allow-all' && !dr.includes(FLAG.ALL)) {
+      dr.push(FLAG.ALL)
     }
 
     if (isScript) {
@@ -135,9 +143,10 @@ COMMANDS:
   install           Install the project entry point in a given manifest.
   run               Run the project entry point with a given manifest.
   upgrade           Install a project, adding --force for deno.
+  validate          Validate that a given manifest on the filesystem will pass.
 
 OPTIONS:
-  --dr.force        Use with command 'display' toignore errors.
+  --dr.force        Use with command 'display' to ignore errors.
   --dr.allow-all    Use with commands 'install', 'run', and 'upgrade' to accept
                     all permissions.
 

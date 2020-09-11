@@ -27,14 +27,7 @@ function objectToSource (val: any) {
     .replace(/"\[Circular\]"/gu, CIRC_REF)
 }
 
-export function message (...args: any[]) {
-  const eol = Deno.build.os === 'windows' ? '\r\n' : '\n'
-  const str = args.map(item => {
-    return typeof item === 'object' ? objectToSource(item) : item
-  }).join(' ')
-
-  Deno.stdout.writeSync(new TextEncoder().encode(str + eol))
-}
+export const { log: message } = console
 
 export function prompt(message: string = '') {
   const buf = new Uint8Array(1024)

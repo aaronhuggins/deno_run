@@ -1,3 +1,4 @@
+import { Colors } from './deps.ts'
 import {
   importManifest,
   validateManifest,
@@ -52,11 +53,20 @@ async function main () {
 
   let cmd: string[] = []
 
-  if (!options.dr.force) {
+  if (!options.dr.force || options.dr.command === 'validate') {
     const error = validateManifest(manifest)
 
     if (typeof error !== 'undefined') {
       throw error
+    }
+
+    // Exit early for validate command.
+    if (options.dr.command === 'validate') {
+      message('')
+      message('  ' + Colors.green('✓') + ' Valid manifest: ' + Colors.cyan(importPath))
+      message('')
+
+      return
     }
   }
 
