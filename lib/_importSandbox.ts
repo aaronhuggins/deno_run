@@ -13,7 +13,7 @@ function sandboxError (type: string) {
 export async function importSandbox (importPath: string): Promise<any> {
   // Try running in an unprivileged Deno subprocess.
   const process = Deno.run({
-    cmd: ['deno', 'run', importPath],
+    cmd: ['deno', 'run', '--reload', '--quiet', importPath],
     stderr: 'piped',
     stdin: 'null',
     stdout: 'piped'
